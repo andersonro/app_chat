@@ -1,5 +1,6 @@
 import 'package:app_chat/models/room_model.dart';
 import 'package:app_chat/models/user_model.dart';
+import 'package:app_chat/views/drawer_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../viewmodels/chat_viewmodel.dart';
@@ -20,6 +21,30 @@ class ChatScreen extends StatefulWidget {
 
 class _ChatScreenState extends State<ChatScreen> {
   final ChatViewModel controller = Get.put(ChatViewModel());
+  final ScrollController _sc = ScrollController();
+  final TextEditingController _textEditingController = TextEditingController();
+
+  sendMessage() async {
+    debugPrint('sendMessage ${_textEditingController.text}');
+    if (_textEditingController.text.isNotEmpty) {
+      await controller.sendMessage(
+        userModel: widget.userModel,
+        roomModel: widget.roomModel,
+        text: _textEditingController.text,
+      );
+      _textEditingController.clear();
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    loadMessages();
+  }
+
+  loadMessages() async {
+    await controller.getMessages2(widget.roomModel.roomId);
+  }
 
   // Substitua pelo nickname do usuário real
   @override
@@ -30,21 +55,30 @@ class _ChatScreenState extends State<ChatScreen> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Text(widget.userModel.nickname),
-            Text(widget.roomModel.name, style: TextStyle(fontSize: 12)),
+            Text(
+              'Sala: ${widget.roomModel.name}',
+              style: TextStyle(fontSize: 12),
+            ),
           ],
         ),
         centerTitle: true,
       ),
+      drawer: DrawerScreen(userModel: widget.userModel),
       body: Column(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        mainAxisAlignment: MainAxisAlignment.end,
         children: [
           Expanded(
             child: StreamBuilder<List<MessageModel>>(
               stream: controller.getMessages(widget.roomModel.roomId),
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
-                  final messages = snapshot.data!;
+                  final messages = snapshot.data!.reversed.toList();
+
                   return ListView.builder(
-                    reverse: true, // Exibe as mensagens mais recentes no final
+                    controller: _sc,
+                    shrinkWrap: true,
+                    reverse: false,
                     itemCount: messages.length,
                     itemBuilder: (context, index) {
                       final message = messages[index];
@@ -66,7 +100,7 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   Widget _buildMessage(MessageModel message) {
-    final isMe = message.userModel.userId == widget.userModel.userId;
+    final isMe = message.userId == widget.userModel.userId;
     final alignment = isMe ? Alignment.centerRight : Alignment.centerLeft;
     final color = isMe ? Colors.blue[100] : Colors.grey[300];
 
@@ -83,16 +117,25 @@ class _ChatScreenState extends State<ChatScreen> {
           crossAxisAlignment:
               isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
           children: [
-            Text(
-              message.userModel.nickname,
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-            Text(message.text),
-            Text(
-              DateFormat(
-                'HH:mm',
-              ).format(message.timestamp.toDate()), // Formata a hora
-              style: TextStyle(fontSize: 12.0, color: Colors.grey[600]),
+            SizedBox(
+              width: MediaQuery.of(context).size.width * 0.85,
+              child: Column(
+                crossAxisAlignment:
+                    isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    message.nickname,
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  Text(message.text),
+                  Text(
+                    DateFormat(
+                      'HH:mm:ss',
+                    ).format(message.timestamp), // Formata a hora
+                    style: TextStyle(fontSize: 12.0, color: Colors.grey[600]),
+                  ),
+                ],
+              ),
             ),
           ],
         ),
@@ -107,19 +150,19 @@ class _ChatScreenState extends State<ChatScreen> {
         children: [
           Expanded(
             child: TextField(
-              controller: TextEditingController.fromValue(
-                TextEditingValue(text: controller.messageText.value),
-              ),
-              onChanged: (value) => controller.messageText.value = value,
+              controller: _textEditingController,
+              onChanged: (value) {
+                _textEditingController.text = value;
+                setState(() {});
+              },
               decoration: InputDecoration(hintText: 'Digite sua mensagem'),
             ),
           ),
           IconButton(
             icon: Icon(Icons.send),
             onPressed: () {
-              if (controller.messageText.value.isNotEmpty) {
-                controller.sendMessage(widget.roomModel, widget.userModel);
-              }
+              debugPrint('Clicou Enviando mensagem');
+              sendMessage();
             },
           ),
         ],

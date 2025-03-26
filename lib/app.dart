@@ -19,6 +19,7 @@ class App extends StatelessWidget {
           backgroundColor: Colors.blue,
           titleTextStyle: TextStyle(color: Colors.white, fontSize: 26),
           elevation: 0,
+          iconTheme: IconThemeData(color: Colors.white),
         ),
         inputDecorationTheme: InputDecorationTheme(
           border: OutlineInputBorder(

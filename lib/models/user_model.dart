@@ -1,10 +1,8 @@
-import 'package:uuid/uuid.dart';
-
 class UserModel {
-  final String? userId = Uuid().v1();
+  final String userId;
   final String nickname;
 
-  UserModel({required this.nickname, String? userId});
+  UserModel({required this.nickname, required this.userId});
 
   Map<String, dynamic> toJson() {
     return {'nickname': nickname, 'userId': userId};

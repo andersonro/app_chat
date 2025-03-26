@@ -1,35 +1,37 @@
-import 'package:app_chat/models/room_model.dart';
-import 'package:app_chat/models/user_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class MessageModel {
-  final UserModel userModel;
-  final RoomModel roomModel;
+  final String userId;
+  final String nickname;
+  final String roomId;
   final String text;
-  final Timestamp timestamp;
+  final DateTime timestamp;
 
   MessageModel({
-    required this.userModel,
-    required this.roomModel,
+    required this.userId,
+    required this.nickname,
+    required this.roomId,
     required this.text,
     required this.timestamp,
   });
 
   Map<String, dynamic> toJson() {
     return {
-      'userModel': userModel,
-      'roomModel': roomModel,
+      'userId': userId,
+      'nickname': nickname,
+      'roomId': roomId,
       'text': text,
-      'timestamp': timestamp,
+      'timestamp': Timestamp.fromDate(timestamp),
     };
   }
 
   factory MessageModel.fromJson(Map<String, dynamic> json) {
     return MessageModel(
-      userModel: json['userModel'],
-      roomModel: json['roomModel'],
+      userId: json['userId'],
+      nickname: json['nickname'],
+      roomId: json['roomId'],
       text: json['text'],
-      timestamp: json['timestamp'],
+      timestamp: (json['timestamp'] as Timestamp).toDate(),
     );
   }
 }

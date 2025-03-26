@@ -1,6 +1,8 @@
 import 'package:app_chat/models/user_model.dart';
+import 'package:app_chat/views/room_selection_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:uuid/uuid.dart';
 import '../viewmodels/login_viewmodel.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -22,20 +24,22 @@ class _LoginScreenState extends State<LoginScreen> {
       _formKey.currentState!.save();
 
       try {
-        UserModel user = UserModel(nickname: _nicknameController.text);
+        UserModel user = UserModel(
+          nickname: _nicknameController.text,
+          userId: Uuid().v4(),
+        );
         user = await controller.addUser(user);
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Usuário cadastrado com sucesso!')),
           );
-          /*
+
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
               builder: (context) => RoomSelectionScreen(userModel: user),
             ),
           );
-          */
         }
       } catch (e) {
         if (mounted) {
@@ -43,18 +47,6 @@ class _LoginScreenState extends State<LoginScreen> {
             context,
           ).showSnackBar(SnackBar(content: Text('Erro: $e')));
         }
-      }
-    }
-  }
-
-  getUser() async {
-    try {
-      await controller.getUser('407cdcd0-07e7-11f0-882e-79f8219cee67');
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Erro: $e')));
       }
     }
   }
@@ -94,12 +86,6 @@ class _LoginScreenState extends State<LoginScreen> {
                   saveUser();
                 },
                 child: Text('Entrar'),
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  getUser();
-                },
-                child: Text('Consultar'),
               ),
             ],
           ),

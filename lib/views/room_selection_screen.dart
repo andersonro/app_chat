@@ -18,7 +18,18 @@ class _RoomSelectionScreenState extends State<RoomSelectionScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(widget.userModel.nickname), centerTitle: true),
+      appBar: AppBar(
+        title: Column(
+          children: [
+            Text('Olá, ${widget.userModel.nickname}'),
+            Text(
+              'Selecione uma sala de bate-papo',
+              style: TextStyle(fontSize: 12),
+            ),
+          ],
+        ),
+        centerTitle: true,
+      ),
       body: Obx(
         () =>
             controller.getState.value == StateRoom.success
@@ -35,7 +46,7 @@ class _RoomSelectionScreenState extends State<RoomSelectionScreen> {
                       shadowColor: Colors.blue.shade800,
                       child: InkWell(
                         onTap: () {
-                          Navigator.pushReplacement(
+                          Navigator.push(
                             context,
                             MaterialPageRoute(
                               builder:

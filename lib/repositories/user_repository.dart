@@ -7,7 +7,7 @@ class UserRepository {
 
   Future<UserModel> addUser(UserModel user) async {
     await usersCollection.add(user.toJson());
-    UserModel userModel = await getUser(user.userId!);
+    UserModel userModel = await getUser(user.userId);
     return userModel;
   }
 

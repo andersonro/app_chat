@@ -1,8 +1,11 @@
+import 'package:app_chat/models/user_model.dart';
 import 'package:app_chat/views/login_screen.dart';
+import 'package:app_chat/views/room_selection_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:app_chat/repositories/user_logado_repository.dart';
 
 class SplashScreen extends StatefulWidget {
-  const SplashScreen({Key? key}) : super(key: key);
+  const SplashScreen({super.key});
 
   @override
   State<SplashScreen> createState() => _SplashScreenState();
@@ -48,11 +51,19 @@ class _SplashScreenState extends State<SplashScreen>
   }
 
   _loginScreen() async {
+    UserLogadoRepository userLogadoRepository = UserLogadoRepository();
+    UserModel? userModel = await userLogadoRepository.getUserLogado();
+    Widget page =
+        userModel != null
+            ? RoomSelectionScreen(userModel: userModel)
+            : LoginScreen();
     Future.delayed(Duration(seconds: 6), () {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => LoginScreen()),
-      );
+      if (mounted) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => page),
+        );
+      }
     });
   }
 
