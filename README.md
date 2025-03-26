@@ -1,16 +1,18 @@
-# app_chat
+# APP Chat
 
-A new Flutter project.
+### Desafio Bootcamp - [DIO](https://web.dio.me/)
 
-## Getting Started
+### Requisitos do Desafio
+- Aplicação em Flutter​
+- Persistência de dados no firebase
+- Cadastro de pessoa com foto de perfil​
+- Salvar apenas o path da imagem na base de dados
+- Listar das pessoas em uma lista com sua respectiva foto​
 
-This project is a starting point for a Flutter application.
+### Pacotes utilizado
 
-A few resources to get you started if this is your first Flutter project:
+- [Getx](https://pub.dev/packages/get) - Gerenciador de estado
+- [Firebase](https://console.firebase.google.com/) - Banco de dados
+- [shared_preferences](https://pub.dev/packages/shared_preferences) - Armazenamento de dados localmente
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+imagem do desafio
